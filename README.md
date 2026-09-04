@@ -26,7 +26,7 @@ GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 - controlled form + 필수값 검증 + 제출 중 비활성화
 - 전역 상태(Context)로 테마, 로그인 사용자, 알림 관리
 - 메모이제이션과 지연 검색으로 불필요한 렌더링 완화
-- WebMCP 도구 노출
+- WebMCP imperative 도구 등록 코드 포함
 
 <a id="routes"></a>
 ## 라우트
@@ -273,5 +273,7 @@ supabase db push --linked --yes
 - `npm run test` 통과
 - `npm run build` 통과
 - `npm run test:remote` 통과
+
+참고: `hooks/use-webmcp.ts`에 imperative WebMCP 등록 코드는 포함했지만, 현재 배포물은 별도 MCP 연결 선언을 하지 않아 Sites 연결 검증 대상에는 포함하지 않았습니다.
 
 배포 URL과 GitHub 저장소 URL은 실제 공개 주소로 반영했습니다.
