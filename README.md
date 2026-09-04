@@ -5,6 +5,7 @@ React 기반 SPA 과제 제출용 프로젝트입니다. 하루의 몰입, 감�
 배포 URL: https://flowday-focus.vivleon0510.chatgpt.site/  
 GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 
+<a id="overview"></a>
 ## 프로젝트 개요
 
 - 서비스 주제: 개인 몰입 기록 저널
@@ -14,6 +15,7 @@ GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 - 스타일링: Tailwind CSS 4
 - 애니메이션: Framer Motion
 
+<a id="features"></a>
 ## 주요 기능
 
 - 최소 5개 이상 라우트 구성
@@ -26,6 +28,7 @@ GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 - 메모이제이션과 지연 검색으로 불필요한 렌더링 완화
 - WebMCP 도구 노출
 
+<a id="routes"></a>
 ## 라우트
 
 | 경로 | 설명 |
@@ -39,6 +42,7 @@ GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 | `/profile` | 프로필 / 테마 / 요약 통계 |
 | `*` | Not Found |
 
+<a id="structure"></a>
 ## 폴더 구조
 
 ```text
@@ -52,6 +56,7 @@ tests/                Vitest 테스트
 scripts/              원격 CRUD 검증 스크립트
 ```
 
+<a id="components"></a>
 ## 재사용 컴포넌트
 
 과제 기준인 8개 이상을 충족하도록 재사용 컴포넌트를 분리했습니다.
@@ -72,6 +77,7 @@ scripts/              원격 CRUD 검증 스크립트
 - `SectionHeading`
 - `StatusPill`
 
+<a id="state-flow"></a>
 ## 상태와 데이터 흐름
 
 ### 사용자 이벤트 → 상태 변화 → 렌더링 변화 예시
@@ -103,6 +109,7 @@ scripts/              원격 CRUD 검증 스크립트
 - 수정 화면에서 기존 데이터 폼 초기값 주입
 - WebMCP 도구 등록
 
+<a id="requirements"></a>
 ## 요구사항 체크
 
 ### 필수 요구사항
@@ -134,6 +141,7 @@ scripts/              원격 CRUD 검증 스크립트
 - [x] 성능 최적화: `useMemo`, `useDeferredValue`, `React.memo`
 - [x] 인증 추가: Supabase Auth + 보호 라우트
 
+<a id="result-examples"></a>
 ## 결과 예시 수행 내용
 
 아래 예시를 실제로 구현했고, 검증도 각각 진행했습니다.
@@ -146,6 +154,7 @@ scripts/              원격 CRUD 검증 스크립트
 - 요청 실패 시 "요청에 실패했습니다. 다시 시도하세요." 패턴으로 표시됩니다.
 - 잘못된 주소 접근 시 404 페이지가 표시됩니다.
 
+<a id="verification"></a>
 ## 테스트 및 검증
 
 ### 로컬 검증
@@ -159,6 +168,12 @@ npm run build
 ```
 
 ### 원격 CRUD 검증
+
+선택적인 원격 검증은 Git에서 제외되는 `.env.remote-test`에 서버 전용 정리 키를 준비한 로컬/CI 환경에서만 실행합니다. 이 키를 `VITE_` 변수나 배포 환경에 넣어서는 안 됩니다.
+
+```dotenv
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_for_test_cleanup_only
+```
 
 ```bash
 npm run test:remote
@@ -174,6 +189,7 @@ npm run test:remote
 - RLS owner 기준 확인
 - 테스트 사용자 정리
 
+<a id="local-run"></a>
 ## 실행 방법
 
 ### 1. 패키지 설치
@@ -203,6 +219,7 @@ npm run dev
 npm run build
 ```
 
+<a id="supabase-setup"></a>
 ## Supabase 설정
 
 ### 필요한 환경 변수
@@ -217,6 +234,7 @@ supabase link --project-ref <your-project-ref>
 supabase db push --linked --yes
 ```
 
+<a id="stack"></a>
 ## 기술 스택
 
 - React 19
@@ -228,6 +246,7 @@ supabase db push --linked --yes
 - Vitest
 - Testing Library
 
+<a id="evaluator-answers"></a>
 ## 평가용 바로 답변 표
 
 | 질문 | 구현 위치 | 바로 말할 답변 | 검증 근거 |
@@ -239,12 +258,14 @@ supabase db push --linked --yes
 | 비동기 상태는 어떻게 표현했나요? | `components/shared/state-panel.tsx` | 로딩/성공/실패/빈 상태를 각 페이지마다 따로 만들지 않고 공통 컴포넌트로 통일했습니다. | 목록, 상세, 프로필, 보호 라우트가 같은 패턴을 씁니다. |
 | 라우팅부터 렌더링까지 한 기능이 어떻게 연결되나요? | `app/entries/new/page.tsx`, `screens/entry-form-screen.tsx`, `lib/validation.ts` | `/entries/new` 진입 후 입력 상태를 갱신하고, 제출 시 검증 후 Supabase에 저장하고, 성공 알림과 함께 상세 라우트로 이동합니다. | 입력 미리보기, 제출 알림, 상세 이동이 한 흐름으로 이어집니다. |
 
+<a id="security"></a>
 ## 보안 메모
 
 - `.env`와 `.env.remote-test`는 Git 추적에서 제외됩니다.
 - 실제 키는 저장소에 커밋하지 않습니다.
 - 배포 환경에서는 플랫폼 환경 변수에 별도로 등록해야 합니다.
 
+<a id="release-check"></a>
 ## 제출 전 최종 검증 메모
 
 - `npm run typecheck` 통과
