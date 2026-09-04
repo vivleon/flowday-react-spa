@@ -2,8 +2,8 @@
 
 React 기반 SPA 과제 제출용 프로젝트입니다. 하루의 몰입, 감정, 다음 행동을 기록하는 "Flowday" 서비스를 구현했습니다.
 
-배포 URL: 배포 후 업데이트 예정  
-GitHub 저장소: 생성 후 업데이트 예정
+배포 URL: https://flowday-focus.vivleon0510.chatgpt.site/  
+GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 
 ## 프로젝트 개요
 
@@ -253,4 +253,4 @@ supabase db push --linked --yes
 - `npm run build` 통과
 - `npm run test:remote` 통과
 
-배포 URL과 GitHub 저장소 URL은 실제 공개 후 이 문서 상단에 반영합니다.
+배포 URL과 GitHub 저장소 URL은 실제 공개 주소로 반영했습니다.
