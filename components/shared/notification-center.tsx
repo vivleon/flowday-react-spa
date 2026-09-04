@@ -42,7 +42,7 @@ export function NotificationCenter() {
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => dismissNotice(notice.id)}
-                aria-label="Dismiss notice"
+                aria-label="알림 닫기"
               >
                 <X className="size-4" />
               </Button>

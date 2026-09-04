@@ -14,6 +14,15 @@ const navItems = [
   { href: '/profile', label: '프로필' },
 ];
 
+function isActiveRoute(href: string, pathname: string) {
+  if (href === '/') return pathname === '/';
+  if (href === '/entries/new') return pathname === '/entries/new';
+  if (href === '/entries') {
+    return pathname.startsWith('/entries') && pathname !== '/entries/new';
+  }
+  return pathname === href;
+}
+
 export function MainNav() {
   const pathname = usePathname();
   const currentPath = pathname ?? '/';
@@ -36,10 +45,7 @@ export function MainNav() {
 
       <nav className="order-3 flex w-full items-center gap-1 overflow-x-auto border-t border-border/70 pt-3 md:order-none md:w-auto md:border-0 md:pt-0" aria-label="주요 메뉴">
         {navItems.map((item) => {
-          const active =
-            item.href === '/'
-              ? currentPath === '/'
-              : currentPath.startsWith(item.href);
+          const active = isActiveRoute(item.href, currentPath);
 
           return (
             <Link
