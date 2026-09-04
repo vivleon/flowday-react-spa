@@ -17,6 +17,10 @@ export function validateEntry(values: FlowEntryDraft) {
 
   if (!values.title.trim()) {
     errors.title = '타이틀을 입력해 주세요.';
+  } else if (values.title.trim().length < 2) {
+    errors.title = '타이틀은 2자 이상 입력해 주세요.';
+  } else if (values.title.trim().length > 80) {
+    errors.title = '타이틀은 80자 이하로 입력해 주세요.';
   }
 
   if (!values.reflection.trim()) {

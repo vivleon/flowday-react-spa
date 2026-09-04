@@ -1,7 +1,7 @@
 'use client';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Field, FieldContent, FieldDescription, FieldError, FieldTitle } from '@/components/ui/field';
+import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { EntryPreview } from '@/components/journal/entry-preview';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,11 +41,14 @@ export function EntryForm({
           ) : null}
 
           <Field>
-            <FieldTitle>기록 제목</FieldTitle>
+            <FieldLabel htmlFor="entry-title">기록 제목</FieldLabel>
             <FieldContent>
               <Input
+                id="entry-title"
                 value={values.title}
                 onChange={(event) => onChange('title', event.target.value)}
+                minLength={2}
+                maxLength={80}
                 aria-invalid={Boolean(errors.title)}
                 placeholder="예: Launch day 집중 루틴"
               />
@@ -56,9 +59,10 @@ export function EntryForm({
 
           <div className="grid gap-5 sm:grid-cols-3">
             <Field>
-              <FieldTitle>오늘의 감정</FieldTitle>
+              <FieldLabel htmlFor="entry-mood">오늘의 감정</FieldLabel>
               <FieldContent>
                 <select
+                  id="entry-mood"
                   value={values.mood}
                   onChange={(event) =>
                     onChange('mood', event.target.value as FlowEntryDraft['mood'])
@@ -77,9 +81,10 @@ export function EntryForm({
             </Field>
 
             <Field>
-              <FieldTitle>에너지 · {values.energy}/5</FieldTitle>
+              <FieldLabel htmlFor="entry-energy">에너지 · {values.energy}/5</FieldLabel>
               <FieldContent>
                 <input
+                  id="entry-energy"
                   type="range"
                   min={1}
                   max={5}
@@ -96,9 +101,10 @@ export function EntryForm({
             </Field>
 
             <Field>
-              <FieldTitle>집중도 · {values.focus}/5</FieldTitle>
+              <FieldLabel htmlFor="entry-focus">집중도 · {values.focus}/5</FieldLabel>
               <FieldContent>
                 <input
+                  id="entry-focus"
                   type="range"
                   min={1}
                   max={5}
@@ -116,9 +122,10 @@ export function EntryForm({
           </div>
 
           <Field>
-            <FieldTitle>몰입 날짜</FieldTitle>
+            <FieldLabel htmlFor="entry-date">몰입 날짜</FieldLabel>
             <FieldContent>
               <Input
+                id="entry-date"
                 type="date"
                 value={values.entry_date}
                 onChange={(event) => onChange('entry_date', event.target.value)}
@@ -129,9 +136,10 @@ export function EntryForm({
           </Field>
 
           <Field>
-            <FieldTitle>오늘의 기록</FieldTitle>
+            <FieldLabel htmlFor="entry-reflection">오늘의 기록</FieldLabel>
             <FieldContent>
               <Textarea
+                id="entry-reflection"
                 value={values.reflection}
                 onChange={(event) => onChange('reflection', event.target.value)}
                 aria-invalid={Boolean(errors.reflection)}
@@ -142,9 +150,10 @@ export function EntryForm({
           </Field>
 
           <Field>
-            <FieldTitle>잘한 점</FieldTitle>
+            <FieldLabel htmlFor="entry-wins">잘한 점</FieldLabel>
             <FieldContent>
               <Textarea
+                id="entry-wins"
                 value={values.wins}
                 onChange={(event) => onChange('wins', event.target.value)}
                 placeholder="작게라도 잘된 점"
@@ -153,9 +162,10 @@ export function EntryForm({
           </Field>
 
           <Field>
-            <FieldTitle>방해 요소</FieldTitle>
+            <FieldLabel htmlFor="entry-blockers">방해 요소</FieldLabel>
             <FieldContent>
               <Textarea
+                id="entry-blockers"
                 value={values.blockers}
                 onChange={(event) => onChange('blockers', event.target.value)}
                 placeholder="집중을 방해한 요소"
@@ -164,9 +174,10 @@ export function EntryForm({
           </Field>
 
           <Field>
-            <FieldTitle>다음 행동</FieldTitle>
+            <FieldLabel htmlFor="entry-next-step">다음 행동</FieldLabel>
             <FieldContent>
               <Textarea
+                id="entry-next-step"
                 value={values.next_step}
                 onChange={(event) => onChange('next_step', event.target.value)}
                 aria-invalid={Boolean(errors.next_step)}

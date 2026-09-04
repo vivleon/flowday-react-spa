@@ -10,6 +10,16 @@ import { ErrorState, LoadingState } from '@/components/shared/state-panel';
 import { StatusPill } from '@/components/shared/status-pill';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useEntryDetail } from '@/hooks/use-entry-detail';
 import { useNotice } from '@/hooks/use-auth';
 import { useEntries } from '@/hooks/use-entries';
@@ -20,13 +30,10 @@ export function EntryDetailScreen({ id }: { id: string }) {
   const { entry, loading, error, refresh } = useEntryDetail(id);
   const { deleteEntry } = useEntries({ search: '', mood: 'All' });
   const [deleting, setDeleting] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleDelete = async () => {
     if (!entry) {
-      return;
-    }
-
-    if (!window.confirm(`"${entry.title}" 기록을 삭제할까요? 삭제 후 복구할 수 없습니다.`)) {
       return;
     }
 
@@ -34,6 +41,7 @@ export function EntryDetailScreen({ id }: { id: string }) {
 
     try {
       await deleteEntry(entry.id);
+      setConfirmOpen(false);
       notify({
         tone: 'success',
         title: '기록이 삭제되었습니다.',
@@ -87,12 +95,33 @@ export function EntryDetailScreen({ id }: { id: string }) {
                   <Button
                     type="button"
                     variant="destructive"
-                    onClick={handleDelete}
+                    onClick={() => setConfirmOpen(true)}
                     disabled={deleting}
                   >
                     <Trash2 className="mr-2 size-4" />
                     {deleting ? '삭제 중…' : '삭제'}
                   </Button>
+                  <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>이 기록을 삭제할까요?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          “{entry.title}” 기록은 삭제 후 복구할 수 없습니다.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel disabled={deleting}>취소</AlertDialogCancel>
+                        <AlertDialogAction
+                          type="button"
+                          variant="destructive"
+                          disabled={deleting}
+                          onClick={() => void handleDelete()}
+                        >
+                          {deleting ? '삭제 중…' : '삭제하기'}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               }
             />
