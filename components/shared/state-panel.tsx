@@ -23,8 +23,10 @@ export function LoadingState({
         <EmptyMedia variant="icon">
           <Loader2 className="size-4 animate-spin" />
         </EmptyMedia>
-        <EmptyTitle>{title}</EmptyTitle>
-        <EmptyDescription>{description}</EmptyDescription>
+        <div aria-live="polite" className="grid gap-1">
+          <EmptyTitle>{title}</EmptyTitle>
+          <EmptyDescription>{description}</EmptyDescription>
+        </div>
       </EmptyHeader>
     </Empty>
   );
@@ -45,8 +47,10 @@ export function ErrorState({
         <EmptyMedia variant="icon">
           <AlertTriangle className="size-4" />
         </EmptyMedia>
-        <EmptyTitle>{title}</EmptyTitle>
-        <EmptyDescription>{description}</EmptyDescription>
+        <div role="alert">
+          <EmptyTitle>{title}</EmptyTitle>
+          <EmptyDescription>{description}</EmptyDescription>
+        </div>
       </EmptyHeader>
       {onRetry ? (
         <EmptyContent>

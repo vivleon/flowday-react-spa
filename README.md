@@ -13,7 +13,7 @@ GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 - 백엔드: Supabase
 - 프론트엔드: React 19 + Vinext(App Router 기반) + TypeScript
 - 스타일링: Tailwind CSS 4
-- 애니메이션: Framer Motion
+- 애니메이션: CSS 페이지 진입 효과, Libraries.dev Liquid Gooey, Framer Motion 알림
 
 <a id="features"></a>
 ## 주요 기능
@@ -26,6 +26,8 @@ GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 - controlled form + 필수값 검증 + 제출 중 비활성화
 - 전역 상태(Context)로 테마, 로그인 사용자, 알림 관리
 - 메모이제이션과 지연 검색으로 불필요한 렌더링 완화
+- 홈·기록 목록·상세에 한정한 180ms 진입 효과와 동작 줄이기 지원
+- 감정 필터의 기존 선택 상태를 표시하는 Liquid Gooey 이동 효과
 - WebMCP imperative 도구 등록 코드 포함
 
 <a id="routes"></a>
@@ -243,6 +245,7 @@ supabase db push --linked --yes
 - Tailwind CSS 4
 - Supabase
 - Framer Motion
+- Libraries.dev Liquid Gooey (`liquid-gooey@0.2.2`, MIT)
 - Vitest
 - Testing Library
 
@@ -277,3 +280,11 @@ supabase db push --linked --yes
 참고: `hooks/use-webmcp.ts`에 imperative WebMCP 등록 코드는 포함했지만, 현재 배포물은 별도 MCP 연결 선언을 하지 않아 Sites 연결 검증 대상에는 포함하지 않았습니다.
 
 배포 URL과 GitHub 저장소 URL은 실제 공개 주소로 반영했습니다.
+
+### 화면 전환과 오류 처리
+
+- `components/layout/page-transition.tsx`에서 홈·기록 목록·상세를 고릅니다. CSS의 `--flow-enter-duration`과 `--flow-enter-offset`으로 강도를 조절합니다. 폼이나 로그인으로 이동할 때 콘텐츠를 지연시키는 퇴장 효과는 없습니다.
+- `components/journal/filters-bar.tsx`에서 필터의 기존 `mood` 값으로 장식 표시를 이동시킵니다. 좁은 화면과 동작 줄이기 모드에서는 버튼의 선택 표시만 사용합니다. 필터 전환에 별도 API 호출이 없습니다.
+- `useEntryDetail`의 조회 결과가 없으면 공통 빈 상태를, 요청이 실패하면 재시도를 표시합니다. 수정·삭제는 Supabase가 변경된 행 ID를 돌려준 경우에만 성공으로 처리합니다.
+
+모션 디자인 참고: [Libraries.dev Gooey](https://libraries.dev/gooey). 화면 구성과 가독성은 [Hallmark](https://github.com/Nutlope/hallmark)를 참고했습니다.

@@ -102,19 +102,15 @@ export function LoginScreen() {
   };
 
   return (
-    <main className="grid gap-6 lg:grid-cols-[.84fr_1.16fr]">
-      <section className="glass-panel relative min-h-[560px] overflow-hidden border-none bg-foreground p-7 text-background md:p-10">
-        <div className="absolute -right-32 -top-28 size-[30rem] rounded-full bg-primary/35 blur-3xl" />
-        <div className="relative flex h-full min-h-[490px] flex-col justify-between">
-          <p className="text-xs font-bold uppercase tracking-[.24em] text-background/45">FLOWDAY / START</p>
-          <h1 className="max-w-lg text-[clamp(3rem,7vw,5.4rem)] font-black leading-[.9] tracking-[-.07em]">작은 몰입이<br /><span className="text-accent">나만의 리듬</span>이<br />되는 곳.</h1>
-          <p className="max-w-sm text-base leading-7 text-background/60">오늘의 집중과 감정을 기록하고, 다음 행동을 한 문장으로 남겨보세요.</p>
-        </div>
+    <main className="grid gap-5 lg:grid-cols-[minmax(0,.84fr)_minmax(0,1.16fr)]">
+      <section className="flex flex-col justify-center gap-4 rounded-2xl bg-foreground p-6 text-background md:p-10">
+        <h1 className="max-w-[13em] break-words text-balance text-[clamp(2rem,4.5vw,3.75rem)] font-semibold leading-tight tracking-tight">작은 몰입이 나만의 리듬이 되는 곳</h1>
+        <p className="max-w-[38ch] text-base leading-relaxed text-background/80">오늘의 집중과 감정을 기록하고, 다음 행동을 한 문장으로 남겨보세요.</p>
       </section>
 
       <section className="glass-panel border-none p-6 md:p-10">
         <div className="flex items-center justify-between gap-4">
-          <div><p className="text-xs font-extrabold uppercase tracking-[.2em] text-primary">WELCOME</p><h2 className="mt-2 text-4xl font-black tracking-[-.055em]">{user ? '이미 로그인했어요' : mode === 'signin' ? '다시 이어가기' : '새 리듬 만들기'}</h2></div>
+          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{user ? '현재 계정' : mode === 'signin' ? '로그인' : '회원가입'}</h2>
           <Link href="/" className={buttonVariants({ variant: 'ghost' })}>
             <ArrowLeft />
             홈
@@ -123,8 +119,7 @@ export function LoginScreen() {
 
         {user ? (
             <div className="mt-10 space-y-5 rounded-[1.5rem] bg-secondary/70 p-6">
-            <p className="text-sm text-muted-foreground">현재 계정</p>
-            <p className="text-lg font-bold">{user.email || '체험 계정'}</p>
+            <p className="break-words text-lg font-bold">{user.email || '체험 계정'}</p>
             <div className="flex flex-wrap gap-3">
               <Link href="/entries" className={buttonVariants({})}>
                 내 기록 보기
@@ -136,10 +131,11 @@ export function LoginScreen() {
           </div>
         ) : (
           <>
-            <div className="mt-8 grid grid-cols-2 rounded-xl bg-secondary p-1" role="tablist" aria-label="인증 방식">
-              <button type="button" role="tab" aria-selected={mode === 'signin'} onClick={() => { setMode('signin'); setErrors({}); }} className={`rounded-lg px-4 py-2.5 text-sm font-extrabold transition ${mode === 'signin' ? 'bg-card shadow-sm' : 'text-muted-foreground'}`}>로그인</button>
-              <button type="button" role="tab" aria-selected={mode === 'signup'} onClick={() => { setMode('signup'); setErrors({}); }} className={`rounded-lg px-4 py-2.5 text-sm font-extrabold transition ${mode === 'signup' ? 'bg-card shadow-sm' : 'text-muted-foreground'}`}>회원가입</button>
-            </div>
+            <fieldset className="mt-6 grid min-w-0 grid-cols-2 rounded-xl bg-secondary p-1">
+              <legend className="sr-only">인증 방식</legend>
+              <button type="button" aria-pressed={mode === 'signin'} disabled={submitting} onClick={() => { setMode('signin'); setErrors({}); }} className={`min-h-11 rounded-lg px-3 text-sm font-semibold ${mode === 'signin' ? 'bg-card' : 'text-muted-foreground'}`}>로그인</button>
+              <button type="button" aria-pressed={mode === 'signup'} disabled={submitting} onClick={() => { setMode('signup'); setErrors({}); }} className={`min-h-11 rounded-lg px-3 text-sm font-semibold ${mode === 'signup' ? 'bg-card' : 'text-muted-foreground'}`}>회원가입</button>
+            </fieldset>
             <form className="mt-7 space-y-5" onSubmit={handleSubmit} noValidate>
               {errors.root && <p className="rounded-xl border border-destructive/25 bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive" role="alert">{errors.root}</p>}
               {mode === 'signup' && <div className="space-y-2"><Label htmlFor="name">이름</Label><div className="relative"><UserRound className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input id="name" value={name} onChange={(event) => { setName(event.target.value); setErrors((current) => ({ ...current, name: undefined })); }} placeholder="어떻게 불러드릴까요?" className="h-12 rounded-xl pl-10" aria-invalid={Boolean(errors.name)} /></div>{errors.name && <p className="text-sm font-semibold text-destructive">{errors.name}</p>}</div>}

@@ -1,3 +1,4 @@
+/* Hallmark: built: Flowday · redesign: polish · scope: app · theme: brand · nav: persistent journal navigation */
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
@@ -41,7 +42,7 @@
   --card-foreground: oklch(0.24 0.03 245);
   --popover: oklch(1 0.01 95);
   --popover-foreground: oklch(0.24 0.03 245);
-  --primary: oklch(0.56 0.15 200);
+  --primary: oklch(0.47 0.10 200);
   --primary-foreground: oklch(0.99 0.01 100);
   --secondary: oklch(0.93 0.03 105);
   --secondary-foreground: oklch(0.29 0.04 245);
@@ -51,9 +52,11 @@
   --accent-foreground: oklch(0.24 0.03 245);
   --destructive: oklch(0.62 0.21 25);
   --border: oklch(0.87 0.03 95);
-  --input: oklch(0.88 0.02 95);
+  --input: oklch(0.58 0.02 95);
   --ring: oklch(0.62 0.12 210);
   --radius: 1rem;
+  --flow-enter-duration: 180ms;
+  --flow-enter-offset: 6px;
 }
 
 .dark {
@@ -73,7 +76,7 @@
   --accent-foreground: oklch(0.19 0.03 250);
   --destructive: oklch(0.7 0.17 25);
   --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
+  --input: oklch(0.63 0.02 250);
   --ring: oklch(0.71 0.12 210);
 }
 
@@ -87,22 +90,12 @@
 body {
   min-width: 320px;
   min-height: 100vh;
-  background-image:
-    radial-gradient(circle at top, color-mix(in oklch, var(--primary) 18%, transparent), transparent 35%),
-    linear-gradient(180deg, color-mix(in oklch, var(--background) 96%, white), var(--background));
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 92%);
-  opacity: .4;
+a:focus-visible, button:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 a,
@@ -115,13 +108,46 @@ button {
     opacity 180ms ease;
 }
 
-@layer utilities {
+@layer components {
   .app-shell {
     @apply mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 pb-12 pt-4 sm:px-6 lg:px-8;
   }
 
   .glass-panel {
-    @apply rounded-[28px] border border-white/30 bg-white/70 shadow-[0_30px_90px_rgba(28,38,69,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:shadow-[0_30px_90px_rgba(0,0,0,0.35)];
+    @apply rounded-2xl border border-border bg-card;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .flow-route-entry {
+    animation: flow-route-in var(--flow-enter-duration) cubic-bezier(.22, 1, .36, 1);
+  }
+}
+
+@keyframes flow-route-in {
+  from { opacity: .86; transform: translateY(var(--flow-enter-offset)); }
+  to { opacity: 1; transform: none; }
+}
+
+.flow-mood-liquid {
+  display: none;
+}
+
+@media (min-width: 40rem) and (prefers-reduced-motion: no-preference) {
+  .flow-mood-liquid {
+    display: block;
+    position: absolute;
+    inset: auto 0 0;
+    height: 6px;
+    pointer-events: none;
+  }
+
+  .flow-mood-indicator {
+    width: calc(100% / 6);
+    height: 6px;
+    border-radius: 9999px;
+    transform: translateX(calc(var(--mood-index) * 100%)) scaleX(.38);
+    transition: transform var(--flow-enter-duration) cubic-bezier(.22, 1, .36, 1);
   }
 }
 

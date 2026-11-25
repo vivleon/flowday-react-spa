@@ -51,8 +51,9 @@ export function MainNav() {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={active ? 'page' : undefined}
               className={cn(
-                'rounded-full px-4 py-2 text-sm text-muted-foreground',
+                'shrink-0 rounded-lg px-3 py-2.5 text-sm text-muted-foreground sm:px-4',
                 active && 'bg-secondary text-foreground',
               )}
             >
@@ -67,6 +68,7 @@ export function MainNav() {
           type="button"
           size="icon"
           variant="outline"
+          className="size-11"
           aria-label={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
           onClick={toggleTheme}
         >

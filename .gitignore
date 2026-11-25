@@ -38,4 +38,5 @@ next-env.d.ts
 /outputs/
 /work/
 /.playwright-cli/
+/.hallmark/
 tsconfig.tsbuildinfo

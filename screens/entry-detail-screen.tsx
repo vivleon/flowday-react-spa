@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Pencil, Trash2 } from 'lucide-react';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { SectionHeading } from '@/components/shared/section-heading';
-import { ErrorState, LoadingState } from '@/components/shared/state-panel';
+import { EmptyState, ErrorState, LoadingState } from '@/components/shared/state-panel';
 import { StatusPill } from '@/components/shared/status-pill';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -69,7 +69,10 @@ export function EntryDetailScreen({ id }: { id: string }) {
             onRetry={refresh}
           />
         ) : null}
-        {!loading && entry ? (
+        {!loading && !error && !entry ? (
+          <EmptyState title="기록을 찾을 수 없습니다." description="기록이 삭제되었거나 볼 수 없는 상태입니다." ctaHref="/entries" ctaLabel="기록 목록으로" />
+        ) : null}
+        {!loading && !error && entry ? (
           <>
             <SectionHeading
               eyebrow="Focus Log"

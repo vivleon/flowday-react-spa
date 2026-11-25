@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { EntryForm } from '@/components/journal/entry-form';
 import { SectionHeading } from '@/components/shared/section-heading';
-import { ErrorState, LoadingState } from '@/components/shared/state-panel';
+import { EmptyState, ErrorState, LoadingState } from '@/components/shared/state-panel';
 import { useEntryDetail } from '@/hooks/use-entry-detail';
-import { useNotice } from '@/hooks/use-auth';
+import { useAuth, useNotice } from '@/hooks/use-auth';
 import { supabase } from '@/lib/supabase';
 import type { FlowEntryDraft, FlowEntryErrors } from '@/lib/types';
 import { emptyDraft, hasErrors, validateEntry } from '@/lib/validation';
@@ -21,8 +21,9 @@ export function EntryFormScreen({
 }) {
   const router = useRouter();
   const { notify } = useNotice();
+  const { user } = useAuth();
   const isEdit = mode === 'edit';
-  const { entry, loading, error } = useEntryDetail(isEdit ? id : undefined);
+  const { entry, loading, error, refresh } = useEntryDetail(isEdit ? id : undefined);
   const [values, setValues] = useState<FlowEntryDraft>(emptyDraft());
   const [errors, setErrors] = useState<FlowEntryErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -54,6 +55,7 @@ export function EntryFormScreen({
 
   const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitting || (isEdit && (!entry || !id || !user))) return;
     const nextErrors = validateEntry(values);
     setErrors(nextErrors);
 
@@ -75,18 +77,18 @@ export function EntryFormScreen({
     };
 
     const query = isEdit
-      ? supabase.from('flow_entries').update(payload).eq('id', id)
+      ? supabase.from('flow_entries').update(payload).eq('id', id).eq('user_id', user?.id).select('id').maybeSingle()
       : supabase.from('flow_entries').insert(payload).select('id').single();
 
     const { data, error: requestError } = await query;
 
-    if (requestError) {
-      setFormError(requestError.message);
+    if (requestError || !data) {
+      setFormError(requestError ? '저장에 실패했습니다. 잠시 후 다시 시도하세요.' : '이미 삭제되었거나 접근할 수 없는 기록입니다.');
       setSubmitting(false);
       return;
     }
 
-    const targetId = isEdit ? id : (data as { id: string }).id;
+    const targetId = (data as { id: string }).id;
 
     notify({
       tone: 'success',
@@ -114,9 +116,13 @@ export function EntryFormScreen({
           <ErrorState
             title="수정할 기록을 불러오지 못했습니다."
             description={error}
+            onRetry={refresh}
           />
         ) : null}
-        {(!isEdit || entry) && (
+        {isEdit && !loading && !error && !entry && (
+          <EmptyState title="수정할 기록이 없습니다." description="기록이 삭제되었거나 볼 수 없는 상태입니다." ctaHref="/entries" ctaLabel="기록 목록으로" />
+        )}
+        {(!isEdit || (!loading && !error && entry)) && (
           <EntryForm
             values={values}
             errors={errors}

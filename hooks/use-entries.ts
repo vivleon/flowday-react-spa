@@ -30,6 +30,7 @@ export function useEntries(filters: Filters) {
     const { data, error: requestError } = await supabase
       .from('flow_entries')
       .select('*')
+      .eq('user_id', userId)
       .order('entry_date', { ascending: false })
       .order('created_at', { ascending: false });
 
@@ -65,14 +66,21 @@ export function useEntries(filters: Filters) {
   }, [entries, filters.mood, filters.search]);
 
   const deleteEntry = async (id: string) => {
-    const { error: requestError } = await supabase
+    if (!userId) throw new Error('로그인 후 다시 시도해 주세요.');
+
+    const { data, error: requestError } = await supabase
       .from('flow_entries')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select('id')
+      .maybeSingle();
 
     if (requestError) {
       throw new Error('삭제에 실패했습니다. 잠시 후 다시 시도하세요.');
     }
+
+    if (!data) throw new Error('이미 삭제되었거나 접근할 수 없는 기록입니다.');
 
     await fetchEntries();
   };

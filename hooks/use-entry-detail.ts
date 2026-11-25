@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { supabase } from '@/lib/supabase';
 import type { FlowEntry } from '@/lib/types';
@@ -11,22 +11,31 @@ export function useEntryDetail(id?: string) {
   const [entry, setEntry] = useState<FlowEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const activeRequest = useRef<AbortController | null>(null);
 
   const fetchEntry = useCallback(async () => {
-    if (!userId || !id) {
-      setEntry(null);
+    activeRequest.current?.abort();
+    setEntry(null);
+    setError(null);
+
+    if (!userId || !id || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)) {
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    setError(null);
+    const request = new AbortController();
+    activeRequest.current = request;
 
     const { data, error: requestError } = await supabase
       .from('flow_entries')
       .select('*')
       .eq('id', id)
-      .single();
+      .eq('user_id', userId)
+      .abortSignal(request.signal)
+      .maybeSingle();
+
+    if (request.signal.aborted) return;
 
     if (requestError) {
       setEntry(null);
@@ -35,12 +44,13 @@ export function useEntryDetail(id?: string) {
       return;
     }
 
-    setEntry(data as FlowEntry);
+    setEntry(data as FlowEntry | null);
     setLoading(false);
   }, [id, userId]);
 
   useEffect(() => {
     void fetchEntry();
+    return () => activeRequest.current?.abort();
   }, [fetchEntry]);
 
   return {
