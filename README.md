@@ -5,6 +5,15 @@ React 기반 SPA 과제 제출용 프로젝트입니다. 하루의 몰입, 감�
 배포 URL: https://flowday-focus.vivleon0510.chatgpt.site/  
 GitHub 저장소: https://github.com/vivleon/flowday-react-spa
 
+[30초 발표](#presentation) · [예상 질문과 답변](#evaluator-answers) · [필수·보너스 체크](#requirements) · [배포 검증 기록](docs/ACCEPTANCE_TESTS.md#v5)
+
+<a id="presentation"></a>
+## 30초 발표 멘트
+
+> Flowday는 하루의 집중과 감정을 기록하는 React 웹앱입니다. Supabase에서 내 기록을 조회하고 작성·수정·삭제할 수 있습니다. 검색하면 목록이 바뀌고, 폼에 입력하면 미리보기가 갱신되며, 저장하면 알림과 함께 상세 화면으로 이동합니다. 이 세 가지를 통해 사용자 이벤트가 React 상태와 화면에 어떻게 연결되는지 보여주고자 했습니다.
+
+**시연 순서**　[체험 로그인](https://flowday-focus.vivleon0510.chatgpt.site/login) → 기록 목록에서 감정 필터 변경 → 빈 폼 제출 → 입력과 미리보기 → 저장·상세 → 수정·삭제. 목록에서 검색어를 바꿔 빈 상태를 보여주거나 운영체제의 ‘동작 줄이기’를 켜 전환 효과를 비교할 수 있습니다.
+
 <a id="overview"></a>
 ## 프로젝트 개요
 
@@ -63,21 +72,11 @@ scripts/              원격 CRUD 검증 스크립트
 
 과제 기준인 8개 이상을 충족하도록 재사용 컴포넌트를 분리했습니다.
 
-- `MainNav`
-- `PageTransition`
-- `ProtectedRoute`
-- `EntryList`
-- `EntryCard`
-- `EntryForm`
-- `EntryPreview`
-- `FiltersBar`
-- `LoadingState`
-- `ErrorState`
-- `EmptyState`
-- `MetricCard`
-- `NotificationCenter`
-- `SectionHeading`
-- `StatusPill`
+- 목록과 폼: [EntryList](components/journal/entry-list.tsx#L4), [EntryCard](components/journal/entry-card.tsx#L8), [EntryForm](components/journal/entry-form.tsx#L12), [EntryPreview](components/journal/entry-preview.tsx#L6), [FiltersBar](components/journal/filters-bar.tsx#L10)
+- 공통 상태: [LoadingState](components/shared/state-panel.tsx#L13), [ErrorState](components/shared/state-panel.tsx#L35), [EmptyState](components/shared/state-panel.tsx#L66)
+- 공통 표시: [MetricCard](components/shared/metric-card.tsx#L4), [SectionHeading](components/shared/section-heading.tsx#L3), [StatusPill](components/shared/status-pill.tsx#L12)
+
+위 11개는 각각 데이터·문구·콜백 등의 props를 받습니다. 헤더와 알림처럼 Context에서 직접 값을 읽는 컴포넌트는 이 수에 포함하지 않았습니다.
 
 <a id="state-flow"></a>
 ## 상태와 데이터 흐름
@@ -114,34 +113,19 @@ scripts/              원격 CRUD 검증 스크립트
 <a id="requirements"></a>
 ## 요구사항 체크
 
-### 필수 요구사항
-
-- [x] React 기반 프로젝트
-- [x] `pages` 역할은 `app/`, UI는 `components/`, 훅/유틸은 `hooks`, `lib`로 분리
-- [x] 공통 레이아웃과 네비게이션 적용
-- [x] 5개 이상 라우트
-- [x] 목록 / 상세 라우트 포함
-- [x] Not Found 페이지
-- [x] 재사용 컴포넌트 8개 이상
-- [x] controlled form
-- [x] 로딩 / 에러 / 빈 상태 통일
-- [x] 커스텀 훅으로 데이터 조회 분리
-- [x] Supabase 원격 CRUD
-- [x] 등록 / 수정 후 이동 흐름
-- [x] 삭제 후 목록 이동
-- [x] 필수값 검증
-- [x] 입력 근처 에러 표시
-- [x] 제출 중 버튼 비활성화
-- [x] 실패 메시지 표시
-- [x] 외부 접속 가능한 배포
-- [x] GitHub 저장소 공유
-- [x] README 실행 방법 및 스택 명시
-
-### 보너스
-
-- [x] 전역 상태(Context): 사용자, 테마, 알림
-- [x] 성능 최적화: `useMemo`, `useDeferredValue`, `React.memo`
-- [x] 인증 추가: Supabase Auth + 보호 라우트
+| 구분 | 확인 | 구현·검증 근거 |
+| --- | --- | --- |
+| 필수 · React 18 이상 및 역할 분리 | ✅ | [React 19 의존성](package.json), [라우트·화면·UI·훅 구조](#structure) |
+| 필수 · SPA 라우팅과 공통 내비게이션 | ✅ | [7개 경로](#routes), [공통 레이아웃](app/layout.tsx#L12), [내비게이션](components/layout/main-nav.tsx#L10), [404](app/not-found.tsx), [공개 주소 응답](docs/ACCEPTANCE_TESTS.md#v5-routes) |
+| 필수 · prop 기반 재사용 UI 8개 이상 | ✅ | [실제 사용 중인 11개 컴포넌트](#components) |
+| 필수 · 목록/상세/로딩/오류 상태와 커스텀 훅 | ✅ | [목록 훅](hooks/use-entries.ts#L13), [상세 훅](hooks/use-entry-detail.ts#L8), [공통 상태 패널](components/shared/state-panel.tsx#L13), [빈 상태와 오류 검증](docs/ACCEPTANCE_TESTS.md#v5-states) |
+| 필수 · Supabase 목록·상세·등록·수정·삭제 | ✅ | [목록](hooks/use-entries.ts#L30), [상세](hooks/use-entry-detail.ts#L30), [등록·수정](screens/entry-form-screen.tsx#L79), [삭제](hooks/use-entries.ts#L67), [배포 CRUD 검증](docs/ACCEPTANCE_TESTS.md#v5-crud) |
+| 필수 · controlled form, 필수값, 필드 에러, 제출 중, 성공 후 이동 | ✅ | [입력 상태와 제출](screens/entry-form-screen.tsx#L27), [제목·회고·다음 행동 검증](lib/validation.ts#L15), [폼과 스피너](components/journal/entry-form.tsx#L190), [배포 폼 상태 검증](docs/ACCEPTANCE_TESTS.md#v5-forms) |
+| 필수 · 이벤트 → 상태 → 렌더링 3곳 이상 | ✅ | [검색·미리보기·성공 알림·로그인 반영](#state-flow), [배포 브라우저 검증](docs/ACCEPTANCE_TESTS.md#v5-browser) |
+| 필수 · 공개 배포·GitHub·실행법/스택·환경변수 분리 | ✅ | [배포 사이트](https://flowday-focus.vivleon0510.chatgpt.site/), [저장소](https://github.com/vivleon/flowday-react-spa), [실행 방법](#local-run), [기술 스택](#stack), [환경변수 제외](.gitignore#L29) |
+| 보너스 · Context 전역 상태 | ✅ | [로그인·테마·알림 Context](lib/app-context.tsx#L34), [테마 유지와 로그인 반영](docs/ACCEPTANCE_TESTS.md#v5-browser) |
+| 보너스 · 메모이제이션 | ✅ | [필터 `useMemo`](hooks/use-entries.ts#L52), [카드 `React.memo`](components/journal/entry-card.tsx#L70), [입력 지연 `useDeferredValue`](screens/entries-screen.tsx#L19), [필터 재요청 없음](docs/ACCEPTANCE_TESTS.md#v5-browser) |
+| 보너스 · Supabase Auth와 보호 라우트 | ✅ | [이메일·익명 인증](screens/login-screen.tsx#L50), [보호 라우트](components/auth/protected-route.tsx#L10), [RLS 정책](supabase/migrations/20260904203000_create_flow_entries.sql#L38), [공개 환경 인증 검증](docs/ACCEPTANCE_TESTS.md#v5-auth) |
 
 <a id="result-examples"></a>
 ## 결과 예시 수행 내용
@@ -254,12 +238,14 @@ supabase db push --linked --yes
 
 | 질문 | 구현 위치 | 바로 말할 답변 | 검증 근거 |
 | --- | --- | --- | --- |
-| 컴포넌트를 어떤 기준으로 쪼갰나요? | `screens/*`, `components/*` | 라우트 단위 화면은 `screens`, 반복되는 UI와 상태 패턴은 `components`로 분리했습니다. | 목록/폼/상태 패널/네비게이션이 서로 독립 재사용됩니다. |
-| props와 state는 어떻게 구분했나요? | `components/journal/entry-form.tsx`, `screens/entry-form-screen.tsx` | 입력값 같은 변경 가능한 데이터는 상위 screen state로 두고, 하위 컴포넌트는 props로 받아 표시와 이벤트만 담당하게 했습니다. | `EntryForm`은 `values`, `errors`, `onChange`를 props로 받습니다. |
-| 상태를 어디에 두었나요? | `lib/app-context.tsx`, `screens/*`, `hooks/*` | 전역적으로 필요한 로그인/테마/알림만 Context로 올리고, 폼과 목록 필터처럼 지역적인 상태는 각 화면에 남겼습니다. | 네비게이션과 보호 라우트는 Context를 쓰고, 검색 입력은 `EntriesScreen` 내부 상태입니다. |
-| useEffect는 어디에서 왜 쓰였나요? | `lib/app-context.tsx`, `hooks/use-entries.ts`, `hooks/use-webmcp.ts` | 세션 초기화, 원격 데이터 조회, 수정 화면 초기값 주입, WebMCP 등록처럼 렌더 이후 동기화가 필요한 곳에만 사용했습니다. | 로그인 상태 변화와 목록 조회가 effect 기반으로 동작합니다. |
-| 비동기 상태는 어떻게 표현했나요? | `components/shared/state-panel.tsx` | 로딩/성공/실패/빈 상태를 각 페이지마다 따로 만들지 않고 공통 컴포넌트로 통일했습니다. | 목록, 상세, 프로필, 보호 라우트가 같은 패턴을 씁니다. |
-| 라우팅부터 렌더링까지 한 기능이 어떻게 연결되나요? | `app/entries/new/page.tsx`, `screens/entry-form-screen.tsx`, `lib/validation.ts` | `/entries/new` 진입 후 입력 상태를 갱신하고, 제출 시 검증 후 Supabase에 저장하고, 성공 알림과 함께 상세 라우트로 이동합니다. | 입력 미리보기, 제출 알림, 상세 이동이 한 흐름으로 이어집니다. |
+| 화면과 컴포넌트는 어떻게 나눴나요? | [공통 레이아웃](app/layout.tsx#L12), [상세 라우트](app/entries/%5Bid%5D/page.tsx#L3), [목록 화면](screens/entries-screen.tsx#L16), [재사용 UI 11개](#components) | “Vinext App Router로 7개 경로를 구성했습니다. `app`은 경로, `screens`는 화면, `components`는 카드·폼·상태 패널 같은 재사용 UI, `hooks`는 데이터 조회를 맡습니다.” | [7개 경로·전용 404](docs/ACCEPTANCE_TESTS.md#v5-routes), [카드에서 상세로 이동](docs/ACCEPTANCE_TESTS.md#v5-crud) |
+| Props와 State의 차이와 배치 기준은요? | [폼 입력 상태](screens/entry-form-screen.tsx#L27), [폼 props](components/journal/entry-form.tsx#L12), [미리보기](components/journal/entry-preview.tsx#L6), [목록 필터 상태](screens/entries-screen.tsx#L16), [Context](lib/app-context.tsx#L34) | “State는 화면이 기억하는 값이고, props는 부모가 자식에게 넘기는 값이나 함수입니다. 등록 화면이 입력값을 저장하고, 폼과 미리보기는 그 값을 props로 받습니다. 검색어와 감정 필터는 목록 화면에, 여러 화면이 공유하는 로그인·테마·알림은 Context에 뒀습니다.” | [입력에 따른 미리보기 갱신](docs/ACCEPTANCE_TESTS.md#v5-forms), [필터·테마 검증](docs/ACCEPTANCE_TESTS.md#v5-browser) |
+| `useEffect`는 언제 실행되나요? | [목록 조회 effect](hooks/use-entries.ts#L48), [상세 조회와 정리](hooks/use-entry-detail.ts#L51), [세션 구독](lib/app-context.tsx#L62) | “화면이 반영된 뒤 실행되고 의존성이 바뀌면 다시 실행됩니다. 사용자 ID나 상세 ID가 바뀌면 조회 콜백이 바뀌어 다시 조회합니다. 상세 화면을 벗어나면 진행 중인 조회를 중단합니다. 감정 필터는 받아온 목록 안에서 골라냅니다.” | [로그인 후 조회·상세 이동](docs/ACCEPTANCE_TESTS.md#v5-crud), [감정 필터 변경 중 DB 재요청 0건](docs/ACCEPTANCE_TESTS.md#v5-browser) |
+| 비동기 상태는 어떻게 보여주나요? | [공통 패널](components/shared/state-panel.tsx#L13), [상세 조회](hooks/use-entry-detail.ts#L27), [수정 화면 분기](screens/entry-form-screen.tsx#L114), [제출 버튼](components/journal/entry-form.tsx#L190) | “요청 중에는 로딩, 실패하면 오류와 재시도, 조회에 성공했지만 기록이 없으면 빈 상태를 보여줍니다. 저장 중에는 제출 버튼을 잠그고, 수정·삭제는 서버가 변경된 기록 ID를 돌려준 경우에 성공으로 표시합니다.” | [빈 상태·실패 후 재시도](docs/ACCEPTANCE_TESTS.md#v5-states), [제출 중 버튼과 0행 처리](docs/ACCEPTANCE_TESTS.md#v5-forms) |
+| 등록 흐름을 설명해 주세요. | [등록 경로](app/entries/new/page.tsx), [필수값 검증](lib/validation.ts#L15), [저장과 상세 이동](screens/entry-form-screen.tsx#L55), [전역 알림](components/shared/notification-center.tsx#L14) | “`/entries/new`에서 입력하면 상태와 미리보기가 바뀝니다. 저장할 때 필수값을 검증하고 Supabase에 등록합니다. 성공하면 알림을 띄우고, 반환된 ID로 상세 화면에 이동합니다.” | [빈 폼·입력·저장](docs/ACCEPTANCE_TESTS.md#v5-forms), [공개 사이트에서 등록·수정·삭제](docs/ACCEPTANCE_TESTS.md#v5-crud) |
+| 화면이 어떻게 부드럽게 바뀌나요? | [전환 대상](components/layout/page-transition.tsx#L6), [180ms 진입 CSS](app/globals.css#L121), [Gooey 필터](components/journal/filters-bar.tsx#L38) | “홈·목록·상세 본문만 180ms 동안 투명도와 위치를 바꿉니다. 감정 필터는 기존 선택 상태에 맞춰 Gooey 표시가 움직입니다. 동작 줄이기를 켜면 선택 상태와 콘텐츠를 즉시 확인할 수 있습니다.” | [모바일·키보드·뒤로/앞으로·동작 줄이기](docs/ACCEPTANCE_TESTS.md#v5-browser) |
+| 보너스 세 가지는 무엇인가요? | [Context](lib/app-context.tsx#L34), [필터 메모](hooks/use-entries.ts#L52), [카드 memo](components/journal/entry-card.tsx#L70), [Supabase Auth](screens/login-screen.tsx#L50), [보호 라우트](components/auth/protected-route.tsx#L10), [DB 정책](supabase/migrations/20260904203000_create_flow_entries.sql#L38) | “Context로 로그인·테마·알림을 공유하고, `useMemo`와 `React.memo`로 목록 계산과 카드 렌더링을 최적화했습니다. Supabase Auth와 보호 라우트를 적용했고, RLS의 `auth.uid() = user_id` 조건이 DB에서도 각 계정이 자기 기록에만 접근하도록 제한합니다.” | [전역 테마·필터 재요청 확인](docs/ACCEPTANCE_TESTS.md#v5-browser), [인증 검증과 RLS 확인 범위](docs/ACCEPTANCE_TESTS.md#v5-auth) |
+| 어떤 환경에서 검증했나요? | [검사 명령](package.json), [Supabase 환경변수 연결](lib/supabase.ts#L5), [실행 방법](#local-run) | “로컬에서 타입·린트·단위 테스트·프로덕션 빌드를 실행했고, 공개 사이트에서는 테스트 계정으로 CRUD를 끝까지 검증했습니다. 환경변수는 로컬과 Sites 배포에 별도로 설정합니다.” | [v5 소스 커밋과 검증 범위](docs/ACCEPTANCE_TESTS.md#v5), [공개 배포](https://flowday-focus.vivleon0510.chatgpt.site/) |
 
 <a id="security"></a>
 ## 보안 메모
@@ -271,11 +257,7 @@ supabase db push --linked --yes
 <a id="release-check"></a>
 ## 제출 전 최종 검증 메모
 
-- `npm run typecheck` 통과
-- `npm run lint` 통과
-- `npm run test` 통과
-- `npm run build` 통과
-- `npm run test:remote` 통과
+2026-11-26 기준 Sites v5 프로덕션과 `81e5e0e` 코드의 검증 근거는 [인수 테스트 기록](docs/ACCEPTANCE_TESTS.md#v5)에 있습니다. 정적 검사 및 빌드, 공개 브라우저 QA, 이전 원격 스크립트 실행 기록을 구분했습니다.
 
 참고: `hooks/use-webmcp.ts`에 imperative WebMCP 등록 코드는 포함했지만, 현재 배포물은 별도 MCP 연결 선언을 하지 않아 Sites 연결 검증 대상에는 포함하지 않았습니다.
 
